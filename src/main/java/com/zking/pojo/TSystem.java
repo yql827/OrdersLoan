@@ -8,6 +8,7 @@ public class TSystem {
   private String systemName;
   private long systemFid;
   private String url;
+  private  Integer type;
 
 
   public long getSystemId() {
@@ -54,14 +55,23 @@ public class TSystem {
     this.url = url;
   }
 
-  @Override
-  public String toString() {
-    return "TSystem{" +
-            "systemId=" + systemId +
-            ", shiroCode='" + shiroCode + '\'' +
-            ", systemName='" + systemName + '\'' +
-            ", systemFid=" + systemFid +
-            ", url='" + url + '\'' +
-            '}';
-  }
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "TSystem{" +
+                "systemId=" + systemId +
+                ", shiroCode='" + shiroCode + '\'' +
+                ", systemName='" + systemName + '\'' +
+                ", systemFid=" + systemFid +
+                ", url='" + url + '\'' +
+                ", type=" + type +
+                '}';
+    }
 }
