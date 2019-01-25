@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class P2PShiroFilterFactoryBean extends ShiroFilterFactoryBean {
 
-    public  static  String definitions;
+    public  static String definitions;
 
     @Resource
     private TUserDao tUserDao;
@@ -33,8 +33,6 @@ public class P2PShiroFilterFactoryBean extends ShiroFilterFactoryBean {
                 definitions=definitions+system.getUrl()+"="+"perms["+system.getShiroCode()+"]";
             }
         }
-
-        System.out.println(definitions+"=====");
 //从配置文加载权限配置
         Ini ini=new Ini();
 

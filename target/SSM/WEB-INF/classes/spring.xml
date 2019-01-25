@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/mvc
+						http://www.springframework.org/schema/mvc/spring-mvc.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context.xsd
+						http://www.springframework.org/schema/aop
+						http://www.springframework.org/schema/aop/spring-aop.xsd
+						http://www.springframework.org/schema/task
+						http://www.springframework.org/schema/task/spring-task.xsd
+						http://www.springframework.org/schema/tx
+						http://www.springframework.org/schema/tx/spring-tx.xsd">
+    <!-- 自动扫描com.zking包下所有类中的注解 -->
+    <context:component-scan base-package="com.zking"></context:component-scan>
+
+    <!-- 处理静态资源文件，303校验等等（标配，必须写） -->
+    <mvc:annotation-driven />
+    <mvc:default-servlet-handler/>
+    <!--<mvc:resources mapping="/admin/js/**" location="/admin/js/"/>-->
+    <!--<mvc:resources mapping=”/images/**” location=”/images/” />-->
+    <!--控制spring定时任务，多线程的定时器，可设置线程池大小-->
+    <task:annotation-driven scheduler="myScheduler"/>
+    <task:scheduler id="myScheduler" pool-size="10"/>
+
+    <!--jsp跳转前后缀配置-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <property value="/" name="prefix"/>
+    <property value=".jsp" name="suffix"/>
+    </bean>
+
+    <!-- 定义文件上传解析器 -->
+    <bean id="multipartResolver"
+          class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- 设定默认编码 -->
+        <property name="defaultEncoding" value="UTF-8"></property>
+        <!-- 设定文件上传的最大值5MB，5*1024*1024 -->
+        <property name="maxUploadSize" value="5242880"></property>
+    </bean>
+
+
+    <!-- 加载db.properties -->
+    <context:property-placeholder location="classpath*:db.properties"></context:property-placeholder>
+    <!--加载redis配置文件-->
+    <context:property-placeholder location="classpath*:redis.properties"></context:property-placeholder>
+
+    <!--设置连接池，配置redis基本属性-->
+    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <!-- 最大空闲连接数 -->
+        <property name="maxIdle" value="300"/>
+        <!-- 最大连接数 -->
+        <property name="maxTotal" value="600" />
+        <!-- 每次释放连接的最大数目 -->
+        <property name="numTestsPerEvictionRun" value="1024" />
+        <!-- 释放连接的扫描间隔（毫秒） -->
+        <property name="timeBetweenEvictionRunsMillis" value="30000" />
+        <!-- 连接最小空闲时间 -->
+        <property name="minEvictableIdleTimeMillis" value="1800000" />
+        <!-- 获取连接时的最大等待毫秒数,小于零:阻塞不确定的时间,默认-1 -->
+        <property name="maxWaitMillis" value="1000" />
+        <!-- 在获取连接的时候检查有效性, 默认false -->
+        <property name="testOnBorrow" value="false" />
+        <property name="testOnReturn" value="true" />
+        <!-- 在空闲时检查有效性, 默认false -->
+        <property name="testWhileIdle" value="true" />
+        <!-- 连接耗尽时是否阻塞, false报异常,ture阻塞直到超时, 默认true -->
+        <property name="blockWhenExhausted" value="false" />
+    </bean>
+
+    <!-- jedis客户端单机版 -->
+    <bean id="redisClient" class="redis.clients.jedis.JedisPool">
+        <constructor-arg name="host" value="192.168.43.72"></constructor-arg>
+        <constructor-arg name="port" value="6379"></constructor-arg>
+        <constructor-arg name="password" value="123123"></constructor-arg>
+        <constructor-arg name="poolConfig" ref="poolConfig"></constructor-arg>
+        <constructor-arg name="timeout" value="100000"></constructor-arg>
+    </bean>
+
+    <!--配置数据源-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="${mysql.driverClass}"></property>
+        <property name="jdbcUrl" value="${mysql.url}"></property>
+        <property name="user" value="${mysql.username}"></property>
+        <property name="password" value="${mysql.password}"></property>
+        <!-- 配置数据库连接池C3P0 -->
+        <property name="initialPoolSize" value="20"></property>
+        <property name="maxPoolSize" value="50"></property>
+    </bean>
+
+    <!--配置Mybatis中的SqlSessionFactory-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--引入数据源-->
+        <property name="dataSource" ref="dataSource"></property>
+        <!--typeAliasesPackage对应实体类所在的包，这个时候会自动取包名作为别名-->
+        <property name="typeAliasesPackage" value="com.zking.pojo"></property>
+
+        <property value="classpath:mybatis-config.xml" name="configLocation"/>
+    </bean>
+
+    <!-- 扫描Mapper：向com.zking.dao层映射SqlSessionFactory -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!--将sqlSessionFactory注入com.zking.dao包的类中，dao包中的类直接使用sqlSessionFactory -->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
+        <property name="basePackage" value="com.zking.dao"></property>
+    </bean>
+
+    <!-- 开启事务：Spring事务管理 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+    <!-- 可通过注解控制事务 -->
+    <tx:annotation-driven transaction-manager="transactionManager" />
+
+    <!--配置shiro-->
+    <!--<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">-->
+        <!--<property name="securityManager" ref="securityManager"></property>-->
+        <!--&lt;!&ndash;添加Shiro认证过滤器拦截页面&ndash;&gt;-->
+        <!--&lt;!&ndash;使用shiro的内置过滤器拦截资源&ndash;&gt;-->
+        <!--<property name="filterChainDefinitions">-->
+            <!--<value>-->
+                <!--/admin/index.jsp=anon-->
+                <!--/admin/*=authc-->
+                       <!--&lt;!&ndash;所前资源要进行认证，测试下 &ndash;&gt;-->
+            <!--</value>-->
+        <!--</property>-->
+        <!--<property name="loginUrl" value="/admin/login.jsp"></property>-->
+        <!--&lt;!&ndash;配置未授权提示页面&ndash;&gt;-->
+        <!--<property name="unauthorizedUrl" value="/ss.jsp" />-->
+    <!--</bean>-->
+
+    <!--<bean class="com.zking.util.shiro.P2PShiroFilterFactoryBean" id="shiroFilter">-->
+    <!--<property name="securityManager" ref="securityManager"/>-->
+    <!--&lt;!&ndash;登录地址&ndash;&gt;-->
+    <!--<property value="/admin/login.jsp" name="loginUrl"/>-->
+    <!--&lt;!&ndash;权限认证失败跳转的地址&ndash;&gt;-->
+    <!--<property value="/admin/404.jsp" name="unauthorizedUrl"/>-->
+    <!--&lt;!&ndash;需要权限拦截的路径&ndash;&gt;-->
+    <!--<property value="" name="filterChainDefinitions"> </property>-->
+<!--</bean>-->
+    <bean id="shiroFilter" class="com.zking.util.shiro.P2PShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager" />
+        <property name="loginUrl" value="/admin/login.jsp" />
+        <!--<property name="unauthorizedUrl" value="/admin/404.jsp" />-->
+        <property name="filterChainDefinitions">
+            <value>
+                /ss.jsp= anon
+                /admin/drawings-list.jsp=anon
+                <!--/admin/*=authc-->
+            </value>
+        </property>
+    </bean>
+
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realm" ref="Trealm"></property>
+    </bean>
+    <bean id="Trealm" class="com.zking.util.shiro.ShiroClass"></bean>
+
+
+
+
+
+
+
+</beans>

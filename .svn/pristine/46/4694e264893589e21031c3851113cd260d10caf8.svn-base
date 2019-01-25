@@ -1,0 +1,61 @@
+package com.zking.server.impl;
+
+import com.zking.dao.UserDao;
+import com.zking.pojo.Shiro;
+import com.zking.pojo.User;
+import com.zking.server.UserService;
+import com.zking.util.JedisClient;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+@Service("userService")
+public class UserServiceimpl implements UserService {
+    @Resource
+    private UserDao userDao;
+    @Autowired
+    private JedisClient jedisClient;
+
+    @Autowired
+    private JedisPool jedisPool;
+
+    @Override
+    public String getUser(Integer userId) {
+
+        String uname = jedisClient.get("test");
+//        String set = jedisClient.set("test", "张三");
+        System.out.println(uname);
+
+        return "ss.jsp";
+//        return this.userDao.getUser(1);
+    }
+
+    @Override
+    public String getDB() {
+        System.out.println("ok");
+        List<Shiro> shiro = userDao.getShiroByUserId(1);
+//        System.out.println(shiro.size());
+        for (Shiro s : shiro) {
+            System.out.println(s);
+        }
+        System.out.println("=========================");
+        List<Shiro> db1 = userDao.getDB1(1);
+        for (Shiro ss : db1) {
+            System.out.println(ss);
+        }
+        System.out.println("============================");
+        List<Map<String, Object>> db = userDao.getDB(1);
+        for (Map<String, Object> stringObjectMap : db) {
+            System.out.println(stringObjectMap);
+        }
+        return "redirect:/ss.jsp";
+    }
+
+
+}

@@ -18,7 +18,7 @@ public class TBorrowing {
   private String borrowingMethod;
   private String borrowingSource;
   private java.sql.Timestamp borrowingTime;
-  private java.sql.Timestamp lastDate;
+  private String lastDate;
   private double amountRaised;
   private String plan;
   private String bargainId;
@@ -162,14 +162,13 @@ public class TBorrowing {
   }
 
 
-  public java.sql.Timestamp getLastDate() {
+  public String getLastDate() {
     return lastDate;
   }
 
-  public void setLastDate(java.sql.Timestamp lastDate) {
+  public void setLastDate(String lastDate) {
     this.lastDate = lastDate;
   }
-
 
   public double getAmountRaised() {
     return amountRaised;

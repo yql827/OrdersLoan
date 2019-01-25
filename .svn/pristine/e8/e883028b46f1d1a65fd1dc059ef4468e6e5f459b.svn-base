@@ -1,0 +1,50 @@
+package com.zking.pojo;
+
+public class Shiro {
+    private Integer shiro_id;
+    private String shiro_name;
+    private Integer shiro_fid;
+    private Integer shiro_dis;
+
+    @Override
+    public String toString() {
+        return "Shiro{" +
+                "shiro_id=" + shiro_id +
+                ", shiro_name='" + shiro_name + '\'' +
+                ", shiro_fid=" + shiro_fid +
+                ", shiro_dis=" + shiro_dis +
+                '}';
+    }
+
+    public Integer getShiro_id() {
+        return shiro_id;
+    }
+
+    public void setShiro_id(Integer shiro_id) {
+        this.shiro_id = shiro_id;
+    }
+
+    public String getShiro_name() {
+        return shiro_name;
+    }
+
+    public void setShiro_name(String shiro_name) {
+        this.shiro_name = shiro_name;
+    }
+
+    public Integer getShiro_fid() {
+        return shiro_fid;
+    }
+
+    public void setShiro_fid(Integer shiro_fid) {
+        this.shiro_fid = shiro_fid;
+    }
+
+    public Integer getShiro_dis() {
+        return shiro_dis;
+    }
+
+    public void setShiro_dis(Integer shiro_dis) {
+        this.shiro_dis = shiro_dis;
+    }
+}

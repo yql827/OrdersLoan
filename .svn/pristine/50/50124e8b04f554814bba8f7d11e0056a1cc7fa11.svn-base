@@ -1,0 +1,13 @@
+package com.zking.server;
+
+import com.zking.pojo.User;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+public interface LoginService {
+
+    @RequestMapping("/login")
+    public String login(User user, Model model);
+}

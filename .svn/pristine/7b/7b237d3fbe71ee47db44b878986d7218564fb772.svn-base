@@ -1,0 +1,40 @@
+package com.zking.dao;
+
+import com.zking.pojo.Shiro;
+import com.zking.pojo.User;
+import org.apache.ibatis.annotations.Select;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+
+@Service
+public interface UserDao {
+    @Select({"select user_id as userId, user_name as userName, pwd as password from t_user where user_id=#{userId}"})
+//    @Results({
+//            @Result(property = "userId", column = "user_id"),
+//            @Result(property = "userName", column = "user_name"),
+//            @Result(property = "password", column = "pwd")
+//    })
+    public User getUser(Integer userId);
+
+
+//    public List<User> getDB();
+
+    @Select("select * from t_shiro where shiro_id in(\n" +
+            "\tselect shiro_id from t_role_shiro where role_id in(\n" +
+            "\t\tselect role_id from t_user_role where user_id=#{userId}\n" +
+            "\t)\n" +
+            ")")
+    public List<Shiro> getShiroByUserId(Integer userId);
+
+
+    @Select("select s.*,r.* from t_role r, t_user_role ur, t_role_shiro rs, t_shiro s\n" +
+            "where ur.user_id=#{userId} and ur.role_id=rs.role_id and rs.shiro_id=s.shiro_id and r.role_id = ur.role_id")
+    public List<Map<String, Object>> getDB(Integer userId);
+
+    @Select("select s.* from t_user_role ur, t_role_shiro rs, t_shiro s\n" +
+            "where ur.user_id=#{userId} and ur.role_id=rs.role_id and rs.shiro_id=s.shiro_id")
+    public List<Shiro> getDB1(Integer userId);
+
+}

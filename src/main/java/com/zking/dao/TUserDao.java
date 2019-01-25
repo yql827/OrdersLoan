@@ -35,7 +35,7 @@ public interface TUserDao {
      * @param deptId
      * @return
      */
-    @Select("select c.dept_name,c.describes,b.system_id,b.shiro_code,b.system_name,b.system_fid from t_dept_system a, t_system b,t_dept c where a.dept_id=#{deptId} and a.system_id=b.system_id and c.dept_id=#{deptId}")
+    @Select("select c.dept_name,c.describes,b.system_id,b.shiro_code,b.system_name,b.system_fid from t_dept_system a, t_system b,t_dept c where a.dept_id=#{deptId} and a.system_id=b.system_id and c.dept_id=#{deptId} and b.type=1")
     public List<Map<String,Object>>  getSystemByBigDept(long deptId);
 
 
@@ -44,7 +44,7 @@ public interface TUserDao {
      * @param deptId
      * @return
      */
-    @Select("select d.dept_name,s.shiro_code,s.system_name,s.system_fid,s.url from t_dept d,t_system s,t_dept_system ds where ds.system_id=s.system_fid and d.dept_id=ds.dept_id and ds.dept_id=#{deptId}")
+    @Select("select s.* from t_dept_system ds, t_system s where ds.dept_id=#{deptId} and ds.system_id=s.system_id and s.type=1")
     public  List<Map<String,Object>> getSystemBySmallDept(long deptId);
 
     /**
@@ -53,4 +53,26 @@ public interface TUserDao {
      */
     @Select("select * from t_system")
  public  List<TSystem> getSystemAll();
+
+    /**
+     * 根据权限主ID获取权限
+     * @param id
+     * @return
+     */
+    @Select("select * from t_system where system_id=#{id} and type=1")
+    public List<Map<String, Object>> getSys(Integer id);
+
+    /**
+     * 根据权限fid获取头部下的小权限
+     * @param systemFid
+     * @return
+     */
+    @Select("select * from  t_system where system_fid=#{systemFid}")
+    public  List<Map<String, Object>> getALLsystem(Integer systemFid);
+
+
+
+
+
+
 }

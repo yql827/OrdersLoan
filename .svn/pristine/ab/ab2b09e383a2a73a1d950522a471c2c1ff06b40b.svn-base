@@ -1,0 +1,5 @@
+#mysql定义参数
+mysql.driverClass=com.mysql.jdbc.Driver
+mysql.url=jdbc:mysql://127.0.0.1:3306/mybatis
+mysql.username=root
+mysql.password=123123

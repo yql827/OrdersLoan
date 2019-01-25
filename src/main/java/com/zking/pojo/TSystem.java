@@ -1,6 +1,8 @@
 package com.zking.pojo;
 
+import org.springframework.stereotype.Component;
 
+@Component("tSystem")
 public class TSystem {
 
   private long systemId;

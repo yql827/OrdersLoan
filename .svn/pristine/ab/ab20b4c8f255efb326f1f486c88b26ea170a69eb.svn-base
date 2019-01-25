@@ -1,0 +1,16 @@
+package com.zking.server;
+
+import com.zking.dao.UserDao;
+import com.zking.pojo.User;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+public interface UserService {
+
+    @RequestMapping("/getUser")
+    public String getUser(Integer userId);
+
+    @RequestMapping("/getDB")
+    public String getDB();
+}

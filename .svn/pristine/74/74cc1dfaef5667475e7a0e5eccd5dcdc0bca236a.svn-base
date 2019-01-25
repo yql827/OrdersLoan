@@ -1,0 +1,53 @@
+package com.zking.util.shiro;
+
+import com.zking.pojo.User;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.*;
+import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.realm.AuthorizingRealm;
+import org.apache.shiro.subject.PrincipalCollection;
+import org.apache.shiro.subject.Subject;
+
+public class ShiroClass extends AuthorizingRealm {
+
+    /**
+     * 授权
+     * @param principalCollection
+     * @return
+     */
+    @Override
+    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
+        System.out.println("授权中。。。。");
+        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo ();
+        info.addStringPermission("admin:success");
+        return info;
+    }
+
+    /**
+     * 认证
+     * @param authenticationToken
+     * @return
+     * @throws AuthenticationException
+     */
+    @Override
+    protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
+        System.out.println("认证中。。。。。");
+        String userName = "admin";
+        String password = "123123";
+        User user = new User();
+        user.setUserId(2);
+        user.setUserName(userName);
+        user.setPassword(password);
+        Subject subject = SecurityUtils.getSubject();
+        UsernamePasswordToken token = (UsernamePasswordToken)authenticationToken;
+        String username = token.getUsername();
+
+
+        if(!username.equals(userName)){
+            return null;
+        }
+        SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user, user.getPassword(), "");
+        return info;
+    }
+}
