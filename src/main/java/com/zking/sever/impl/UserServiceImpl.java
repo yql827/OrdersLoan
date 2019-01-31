@@ -147,16 +147,11 @@ public class UserServiceImpl  implements UserService {
             system=new TSystem();
             system.setSystemName(systemName);
         }
-
-
-        System.out.println(system+"================");
         allSystems = tSystemDao.getAllSystems(system);
-        System.out.println(allSystems+"???===========");
         if (type.equals("setSystem")) {
             request.setAttribute("setSystem",allSystems);
             return "admin/admin-permission-add";
         }
-
          request.setAttribute("allSystems",allSystems);
          return "admin/admin-permission";
 
@@ -207,10 +202,15 @@ public class UserServiceImpl  implements UserService {
 
         }
         tSystemDao.updateSmallSystems(systemList);
-         QuerySystems(request);
+//        String s = this.QuerySystems(request);
+//        System.out.println(s);
+//        Object allSystems = request.getAttribute("allSystems");
+//           request.setAttribute("allSystems",allSystems);
+        List<TSystem> allSystems = tSystemDao.getAllSystems(null);
+        System.out.println(allSystems);
+        request.getSession().setAttribute("allSystems",allSystems);
 
-
-        return "admin/admin-permission";
+        return "redirect:admin/admin-permission.jsp";
     }
 }
 

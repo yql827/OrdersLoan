@@ -23,18 +23,22 @@
 <script>DD_belatedPNG.fix('*');</script>
 <![endif]-->
 
+
+
 <title>权限管理</title>
 </head>
 <body>
-<c:if test="${empty requestScope.allSystems}">
+<c:if test="${empty allSystems}">
 	<c:redirect url="QuerySystems"/>
 </c:if>
+
 <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 管理员管理 <span class="c-gray en">&gt;</span> 权限管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 <div class="page-container">
 	<div class="text-c">
 		<%--<form class="Huiform" method="post" action="QuerySystems" target="_self">--%>
 			<%--<input type="text" class="input-text" style="width:250px" placeholder="权限名称"  name="systemName">--%>
 			<%--<button type="submit" class="btn btn-success">搜索</button>--%>
+
 		<%--</form>--%>
 	</div>
 	<div class="cl pd-5 bg-1 bk-gray mt-20"> <span class="r">共有数据：<strong>4</strong> 条</span> </div>
@@ -51,7 +55,7 @@
 			</tr>
 		</thead>
 		<tbody id="tables-all">
-			<c:forEach items="${requestScope.allSystems}" var="head">
+			<c:forEach items="${allSystems}" var="head">
                 <c:if test="${head.systemFid==0}">
 
 				<tr class="text-c">
@@ -64,7 +68,7 @@
 
 					<td>
 
-						<c:forEach items="${requestScope.allSystems}" var="u">
+						<c:forEach items="${allSystems}" var="u">
                             <c:if test="${head.systemId==u.systemFid}">
 							${u.systemName},
                             </c:if>
@@ -113,8 +117,9 @@ function admin_permission_add(title,url,w,h){
 /*管理员-权限-编辑*/
 function admin_permission_edit(title,url,w,h){
     layer_show(title,url,w,h);
-}
 
+}
+//location.reload(true)
 /*管理员-权限-删除*/
 function admin_permission_del(obj,id){
     layer.confirm('确认要删除吗？',function(index){
